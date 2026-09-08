@@ -1,12 +1,14 @@
 # 게임 개발
 
-> 이미지를 클릭하시면 유튜브 시연 링크로 연결됩니다.
-
 <aside>
-💡 **인원** : [프로젝트 인원 입력]  
-**기간** : [개발 기간 입력]  
-**담당** : 플레이어·애니메이션·카메라·AI 및 엔진 기능 개발  
-**기술** : C++17, DirectX 11, Dear ImGui, Assimp, JsonCpp, FMOD
+**플레이 영상** : https://youtu.be/093V56PwwEg
+**개발 인원**   : 7인개발 
+**담당 역할**   : 플레이어·애니메이션·카메라 및 연출  
+**플랫폼**      : Windows  
+**기간**        : 2026.03 ~ 2026. 06 
+**담당한 코드만 첨부했습니다** 
+
+
 </aside>
 
 ## 프로젝트 소개
@@ -15,7 +17,7 @@ C++과 DirectX 11을 기반으로 원작 **Hi-Fi RUSH**의 리듬 액션 전투�
 
 플레이어는 음악의 Beat에 맞춰 일반·강공격을 조합하고, 지상·공중 콤보와 파트너 공격을 연계해 전투를 진행합니다. 입력 타이밍에 따라 공격 결과와 연출이 달라지며, Animation Notify를 통해 공격 판정, VFX, SFX와 카메라 효과를 실제 애니메이션 프레임에 동기화했습니다.
 
-게임 콘텐츠뿐 아니라 행동 트리 기반 적 AI, Additive Animation과 3×3 Aim Offset, 동적 Trail, 다단계 충돌 처리, Camera Effect와 Bone Camera, Dear ImGui 기반 콘텐츠 제작 도구도 함께 구현했습니다.
+게임 콘텐츠뿐 아니라  Additive Animation과 3×3 Aim Offset,  Camera Effect와 Bone Camera, Dear ImGui 기반 콘텐츠 제작 도구도 함께 구현했습니다.
 
 ---
 
@@ -29,8 +31,6 @@ C++과 DirectX 11을 기반으로 원작 **Hi-Fi RUSH**의 리듬 액션 전투�
 | Model Import | Assimp |
 | Data | JsonCpp |
 | Audio | FMOD |
-| Collision | DirectX Tool Kit |
-| AI | Behavior Tree / Blackboard |
 | IDE / Build | Visual Studio 2022 / v143 |
 | Platform | Windows |
 
@@ -52,13 +52,10 @@ C++과 DirectX 11을 기반으로 원작 **Hi-Fi RUSH**의 리듬 액션 전투�
 
 배경 음악과 효과음을 관리하고 Animation Notify 및 리듬 이벤트와 사운드 재생 시점을 동기화하는 데 사용했습니다.
 
-#### DirectX Tool Kit
-
-AABB, OBB, Sphere, Capsule 등의 Bounding Volume과 충돌 처리에 활용했습니다.
 
 ---
 
-# 주요 기능
+# 담당 기능
 
 ## 플레이어 전투 시스템
 
@@ -92,16 +89,6 @@ AABB, OBB, Sphere, Capsule 등의 Bounding Volume과 충돌 처리에 활용했�
 - Look Pose 및 IK 후처리
 - Animation Notify 기반 Gameplay Event
 
-## 행동 트리 기반 AI
-
-- Task, Sequence, Selector, Random Selector와 Decorator
-- Blackboard 기반 AI 상태 공유
-- JSON 기반 Behavior Tree Graph
-- Factory·Registry 기반 Runtime Node 생성
-- 적 종류별 행동 Binding
-- ImGui 기반 Behavior Tree Editor
-- 실시간 Node 상태, Breakpoint와 실행 이력
-- 최대 512개 이벤트를 유지하는 Debug Log
 
 ## Camera System
 
@@ -113,87 +100,17 @@ AABB, OBB, Sphere, Capsule 등의 Bounding Volume과 충돌 처리에 활용했�
 - 연출 종료 후 기본 플레이 Camera 복귀
 - Camera Keyframe Sequence와 Ease Curve
 
-## 충돌 시스템
-
-- AABB·OBB·Sphere·Capsule Collider
-- Collision Mask 기반 검사 대상 분리
-- Broad–Mid–Narrow 단계별 후보 필터링
-- Contact Manifold 계산
-- Enter·Stay·Exit Collision Event
-- Ray Cast
-- `weak_ptr` 기반 비소유 Collider 관리
-
-## 동적 Trail
-
-- 무기 양 끝 Bone Transform 추적
-- 시간에 따른 Trail Segment 생성
-- 수명과 최대 Segment 수 관리
-- Trail 폭과 Alpha Fade
-- 공격 상태 및 Animation Notify 연동
-- Dynamic Vertex Buffer 갱신
-
-## 리듬 시스템
-
-- BPM 기반 Beat 시간 관리
-- 입력 시점과 Beat 간 오차 판정
-- 판정 결과에 따른 데미지 보정
-- Combo·Score·UI 연동
-- Beat Listener 기반 오브젝트 동기화
 
 ## 콘텐츠 제작 도구
 
-- 행동 트리 Node·Pin·Link Graph 편집
-- 행동 트리 JSON 저장·불러오기와 Prefab
 - Animation 목록과 Timeline 확인
 - Animation·VFX·SFX Notify 생성·수정·삭제
-- Bone Hierarchy 확인
-- Camera Keyframe 저장 및 편집
-- VFX·Particle Parameter 실시간 수정
-
 ---
 
 # 기술 설명
 
-## 1. GameObject–Component 구조
 
-게임 오브젝트의 변환·렌더링·모델·충돌 기능을 독립적인 Component로 분리했습니다.
-
-```text
-GameObject
-├─ Transform
-├─ Model
-├─ Renderer
-├─ Collider
-└─ Animation Controller
-```
-
-GameObject는 필요한 Component를 문자열 Tag로 등록해 조합하고, 플레이어·적·기믹·VFX의 게임플레이 로직만 파생 클래스에서 구현했습니다.
-
-Transform, Renderer와 Collider 같은 공통 기능을 여러 콘텐츠에서 재사용하면서 객체마다 필요한 기능만 선택적으로 구성했습니다.
-
----
-
-## 2. Prototype 기반 객체 생성
-
-GameObject와 Component의 원형을 Prototype으로 등록하고 `Clone()`을 통해 실제 객체를 생성했습니다.
-
-```text
-Prototype 등록
-    ↓
-문자열 Tag 검색
-    ↓
-Clone()
-    ↓
-인스턴스별 상태 초기화
-    ↓
-Level / Layer 등록
-```
-
-모델과 셰이더 등 공유 가능한 리소스를 Prototype에서 준비하고, 실제 객체 생성 시 인스턴스별 데이터만 초기화하도록 구성했습니다.
-
----
-
-## 3. 플레이어 콤보 시스템
+## 1. 플레이어 콤보 시스템
 
 일반·강공격과 지상·공중 상태를 `ECOMBO` enum으로 구분하고 입력된 순서를 `vector<ECOMBO>`에 저장했습니다.
 
@@ -241,7 +158,7 @@ Queue는 앞쪽 입력을 소비하는 데는 적합하지만 전체 이력의 �
 
 ---
 
-## 4. 콤보 유효 시간과 자동 초기화
+## 2. 콤보 유효 시간과 자동 초기화
 
 과거 입력이 다음 공격까지 남아 의도하지 않은 콤보로 연결되는 것을 방지하기 위해 Combo Timer를 구성했습니다.
 
@@ -293,7 +210,7 @@ Timer 만료 외에도 이동 입력, 최대 유효 입력 수 도달, 판정 �
 
 ---
 
-## 5. Ray Cast 기반 Ground Check
+## 3. Ray Cast 기반 Ground Check
 
 플레이어 위치보다 조금 높은 지점에서 아래 방향으로 Ray를 발사하여 실제 지면까지의 거리를 검사했습니다.
 
@@ -330,7 +247,7 @@ const float checkDistance =
 
 ---
 
-## 6. Layer 기반 Animation Pipeline
+## 4. Layer 기반 Animation Pipeline
 
 Locomotion으로 Base Skeleton Pose를 생성한 뒤 Aim Offset과 일반 Additive Animation을 동일한 Blend Skeleton에 순차 적용했습니다.
 
@@ -350,7 +267,7 @@ IK 및 최종 Bone Matrix
 
 ---
 
-## 7. Additive Animation
+## 5. Additive Animation
 
 Additive Clip의 Bone Transform을 Reference Pose와 비교하여 본별 Translation과 Quaternion Rotation Delta를 계산했습니다.
 
@@ -380,7 +297,7 @@ Locomotion 전체를 새로운 Animation으로 교체하지 않고 필요한 변
 
 ---
 
-## 8. 3×3 Aim Offset
+## 6. 3×3 Aim Offset
 
 타깃 방향을 정규화된 Look Ratio로 변환하고 수평·수직 축의 Weight를 각각 계산했습니다.
 
@@ -403,7 +320,7 @@ Aim Weight(row, column)
 
 ---
 
-## 9. Animation Notify
+## 7. Animation Notify
 
 Animation의 특정 Frame 또는 재생 구간에 Gameplay Event를 등록했습니다.
 
@@ -429,97 +346,8 @@ Animation 코드가 Player, VFX와 Camera의 구체 클래스를 직접 참조�
 
 ---
 
-## 10. 행동 트리 기반 AI
 
-Task, Sequence, Selector, Random Selector와 Decorator를 공통 Node 인터페이스로 구성했습니다.
-
-```text
-Behavior Tree
-└─ Composite
-   ├─ Sequence
-   ├─ Selector
-   └─ Random Selector
-      ├─ Decorator
-      └─ Task
-```
-
-Blackboard에는 문자열 Key를 이용해 `bool`, `int`, `float` 상태를 저장하고, Factory·Registry 구조를 적용해 JSON의 Node Type을 Runtime 객체로 생성했습니다.
-
-새로운 적 행동을 추가할 때 Runtime Builder의 조건문을 수정하지 않고 생성 함수와 Binding을 등록해 확장할 수 있도록 구성했습니다.
-
----
-
-## 11. 행동 트리 에디터와 디버거
-
-Dear ImGui를 이용해 Node, Pin, Link 기반 행동 트리 편집 도구를 구현했습니다.
-
-- Node 생성·삭제와 Link 연결
-- Parameter 편집
-- JSON 저장·불러오기
-- Subtree Prefab
-- Graph 유효성 검사
-- 실행 상태 시각화
-- Breakpoint
-- 객체별 Debug Session
-- 실행 이력
-
-실행 이력은 `deque`에 저장하고 최대 512개만 유지했습니다.
-
-```text
-새 Event → push_back()
-
-512개 초과 → pop_front()
-```
-
-장시간 실행해도 Debug Log가 무한히 증가하지 않도록 메모리 사용량에 상한을 설정했습니다.
-
----
-
-## 12. 다단계 충돌 시스템
-
-Collider를 Collision Mask별로 분류하고 충돌 후보를 단계적으로 축소했습니다.
-
-```text
-Collision Mask
-    ↓
-Broad Phase
-    ↓
-Mid Phase
-    ↓
-Narrow Phase
-    ↓
-Contact Manifold
-```
-
-앞 단계의 검사를 통과한 객체 쌍만 다음 단계로 전달하고 최종 후보에만 Manifold 계산을 수행했습니다.
-
-`weak_ptr`를 이용해 Collision Manager가 GameObject의 수명을 연장하지 않도록 구성하고 만료된 Collider는 Update 과정에서 제거했습니다.
-
----
-
-## 13. 동적 Trail Buffer
-
-무기 Bone의 이동 경로를 Segment 단위로 저장하고 Trail 정점을 갱신했습니다.
-
-```text
-Bone Position 추적
-    ↓
-새 Segment 추가
-    ↓
-인접 Segment 연결
-    ↓
-Vertex·Index 생성
-    ↓
-Dynamic Buffer 갱신
-    ↓
-수명에 따른 제거
-```
-
-Trail의 유지 시간, Segment 수, 분할 수와 Alpha Fade를 Parameter로 관리하고 Animation Notify와 연동해 실제 공격 구간에만 활성화했습니다.
-
----
-
-## 14. Camera Effect System
+## 8. Camera Effect System
 
 플레이어 추적 Camera의 기본 Transform을 계산한 뒤 Shake, Roll과 FOV Kick을 후처리로 순차 적용했습니다.
 
@@ -551,7 +379,7 @@ Roll은 Look 축을 기준으로 Right·Up 벡터를 회전하고, FOV Kick은 B
 
 ---
 
-## 15. Animation 연계 Bone Camera
+## 9. Animation 연계 Bone Camera
 
 Animation Notify를 이용해 특정 Action의 Bone Camera 시작과 종료를 요청했습니다.
 
@@ -572,26 +400,6 @@ Default Camera 복귀
 Bone의 Combined Matrix에서 위치와 기저축을 추출해 목표 Camera Transform으로 변환했습니다.
 
 Timer 진행률에 Ease-out Curve를 적용하고 이전 Transform과 목표 Transform을 보간하여 연출 Camera 진입과 플레이 Camera 복귀가 자연스럽게 이어지도록 구성했습니다.
-
----
-
-## 16. Ray Cast 기반 Spring Camera
-
-플레이어 Pivot에서 Camera 뒤쪽 방향으로 Ray Cast를 수행했습니다.
-
-```text
-Player Pivot
-    ↓
-Camera 반대 방향 Ray
-    ↓
-장애물 검출
-    ↓
-Camera Distance 축소
-```
-
-장애물이 검출되면 Camera를 충돌 지점보다 조금 앞쪽으로 이동시키고 최소 거리를 제한했습니다.
-
-벽이나 지형이 플레이어와 Camera 사이를 가리거나 Camera가 지형을 관통하는 현상을 줄였습니다.
 
 ---
 
@@ -790,46 +598,15 @@ Animation·Damage·Effect 실행
 
 ---
 
-## 성능 수치화
-
-적용한 구조의 효과를 수치로 확인하기 위해 다음 항목을 측정하고 문서화하고 싶습니다.
-
-- 행동 트리 Node 평가 횟수
-- 충돌 단계별 후보 Pair 수
-- Animation Transition 검사 횟수
-- Trail Segment 수에 따른 Buffer 갱신 시간
-- Ray Cast 호출 횟수와 처리 시간
-- Camera Effect 처리 시간
-- Prototype 적용 전후 리소스 생성 횟수
-
----
-
 # 프로젝트를 통해 배운 점
 
-- 콤보 입력 순서를 Vector로 관리하며 자료구조가 단순한 저장 수단을 넘어 게임 규칙과 조작감을 결정하는 요소임을 경험했습니다.
-- Combo Timer, Animation Notify와 상태 전환을 함께 관리하며 입력 허용 시간과 초기화 시점이 액션 게임의 조작감에 미치는 영향을 배웠습니다.
-- Collider 접촉 판정만으로 부족한 부분을 Ray Cast와 수직 속도 기반 검사 거리로 보완하며 Ground 판정을 안정화했습니다.
-- Layer Animation Pipeline을 구현하며 Base Pose와 추가 동작을 분리하고 Animation 조합을 재사용하는 방법을 경험했습니다.
+- 입력 순서를 Vector로 관리하면서 자료구조는 단순한 저장 수단이 아니라 실제 게임 규칙과 조작감을 결정하는 요소임을 경험했습니다.
+- Combo Timer, Animation Notify와 상태 전환을 함께 관리하며 입력 허용 시간과 초기화 시점이 액션 게임의 조작감에 큰 영향을 준다는 점을 배웠습니다.
+- Collider 접촉 판정만으로 부족한 부분을 Ray Cast와 수직 속도 기반 검사 거리로 보완하며 캐릭터 이동과 충돌 판정의 안정성을 개선했습니다.
+- Layer 기반 Animation Pipeline을 구현하며 Base Pose와 추가 동작의 역할을 분리하고 Animation 조합을 재사용하는 방법을 경험했습니다.
 - Reference Pose 기반 Additive Animation과 Aim Offset을 구현하며 Quaternion Delta와 Weight 기반 Pose 합성을 학습했습니다.
-- Animation Notify를 Collider, VFX, SFX와 Camera에 연결하며 Animation과 실제 Gameplay Event의 동기화가 중요하다는 점을 경험했습니다.
-- Behavior Tree, Blackboard, Factory와 Registry를 구현하며 데이터 기반 AI와 Runtime 확장 구조를 설계했습니다.
-- Behavior Tree Editor와 Debugger를 제작하면서 복잡한 AI의 실행 상태를 관찰할 수 있는 도구의 필요성을 배웠습니다.
-- Camera Effect와 Bone Camera를 구현하며 기본 Camera 이동, 연출 효과와 Camera 제어권을 분리하는 방법을 경험했습니다.
-- 충돌 후보 필터링, 제한된 Debug Log와 Prototype 구조를 적용하며 Frame마다 반복되는 작업 범위를 줄이는 방법을 고민했습니다.
+- Animation Notify를 Collider, VFX, SFX, Camera와 연결하면서 화면에 보이는 Animation과 실제 Gameplay Event의 동기화가 중요하다는 점을 경험했습니다.
+- Camera Effect와 Bone Camera를 구현하며 기본 카메라 이동, 연출 효과 및 카메라 제어권을 분리하는 방법을 경험했습니다.
+- 플레이어 기능을 담당하며 애니메이션·충돌·UI·사운드 등 여러 시스템을 연결하는 과정에서, 함수 호출 시점과 기능의 사용 방법을 명확히 문서화하는 것이 협업에 중요하다는 점을 배웠습니다. 또한 유지보수와 이후 작업자를 고려해 의도가 쉽게 드러나는 코드와 인터페이스를 작성하는 습관의 중요성을 느꼈습니다.
 
 ---
-
-# 포트폴리오 편집 시 추가할 자료
-
-1. **프로젝트 소개** : 리듬 전투와 보스전이 함께 보이는 대표 영상
-2. **콤보 시스템** : X·Y 입력 조합 및 지상·공중 콤보 영상
-3. **Ground Check** : 단차·낙하·착지 판정 비교 영상
-4. **Layer Animation** : Locomotion과 Additive 적용 전·후 비교
-5. **Aim Offset** : 3×3 방향 Pose와 실제 보간 결과
-6. **Behavior Tree** : Node Editor와 Runtime Debug 상태
-7. **Camera System** : Shake·Roll·FOV Kick 동시 적용 영상
-8. **Bone Camera** : Animation Notify 기반 진입·복귀 영상
-9. **Trail** : 무기 Bone 추적과 Dynamic Buffer 결과
-10. **문제 해결 경험** : Combo Timer 및 Ground Ray Cast 처리 흐름 도식
-
-> 상단의 프로젝트 인원, 개발 기간, 담당 범위와 YouTube URL은 실제 정보로 교체해 사용합니다.
